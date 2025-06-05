@@ -3,17 +3,16 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { DollarSign, ListChecks, PackageOpen, QrCode, PlusCircle } from "lucide-react";
+import { DollarSign, PackageOpen, QrCode } from "lucide-react";
 import type { User } from "@/types";
 
 interface ActivityOverviewProps {
   user: User | null;
   activeRentalsCount: number;
-  listedItemsCount: number;
   totalEarnings: number;
 }
 
-export function ActivityOverview({ user, activeRentalsCount, listedItemsCount, totalEarnings }: ActivityOverviewProps) {
+export function ActivityOverview({ user, activeRentalsCount, totalEarnings }: ActivityOverviewProps) {
   return (
     <div className="mb-8">
       <h2 className="font-headline text-2xl md:text-3xl font-semibold mb-2">
@@ -21,18 +20,14 @@ export function ActivityOverview({ user, activeRentalsCount, listedItemsCount, t
       </h2>
       <p className="text-muted-foreground mb-6">Her er en rask oversikt over din Relivery-aktivitet.</p>
       
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-6">
         <StatCard title="Aktive Leieforhold" value={activeRentalsCount.toString()} icon={<PackageOpen className="h-6 w-6 text-primary" />} />
-        <StatCard title="Dine Utleieobjekter" value={listedItemsCount.toString()} icon={<ListChecks className="h-6 w-6 text-primary" />} />
         <StatCard title="Total Inntjening" value={`${totalEarnings},- kr`} icon={<DollarSign className="h-6 w-6 text-primary" />} />
-        <Card className="flex flex-col justify-center items-center p-6 bg-primary/5 hover:bg-primary/10 transition-colors">
-            <CardTitle className="font-headline text-lg mb-2 text-center">Klar for mer?</CardTitle>
-            <div className="flex flex-col sm:flex-row gap-2 w-full">
-                <Button asChild className="flex-1 font-headline">
+        <Card className="flex flex-col justify-center items-center p-6 bg-primary/5 hover:bg-primary/10 transition-colors md:col-span-2 lg:col-span-1">
+            <CardTitle className="font-headline text-lg mb-2 text-center">Klar for å leie?</CardTitle>
+            <div className="flex flex-col gap-2 w-full">
+                <Button asChild className="w-full font-headline">
                     <Link href="/scan"><QrCode className="mr-2 h-4 w-4"/>Skann & Lei</Link>
-                </Button>
-                <Button variant="outline" asChild className="flex-1 font-headline">
-                    <Link href="/list-item"><PlusCircle className="mr-2 h-4 w-4"/>List Nytt</Link>
                 </Button>
             </div>
         </Card>

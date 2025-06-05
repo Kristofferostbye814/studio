@@ -5,12 +5,8 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
   QrCode,
-  PlusCircle,
-  ListChecks,
   ShoppingBag,
   Settings,
-  Users,
-  Briefcase,
   Repeat,
   DollarSign
 } from 'lucide-react';
@@ -30,9 +26,7 @@ import {
 const navItems = [
   { href: '/dashboard', label: 'Min Side', icon: LayoutDashboard },
   { href: '/scan', label: 'Skann QR', icon: QrCode },
-  { href: '/list-item', label: 'List Nytt', icon: PlusCircle },
   { href: '/dashboard/my-rentals', label: 'Mine Leieforhold', icon: ShoppingBag },
-  { href: '/dashboard/my-listings', label: 'Mine Utleieobjekter', icon: ListChecks },
   { href: '/dashboard/returns', label: 'Returer', icon: Repeat },
   { href: '/dashboard/earnings', label: 'Inntekter', icon: DollarSign },
   { href: '/dashboard/settings', label: 'Innstillinger', icon: Settings },

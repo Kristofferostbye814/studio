@@ -6,7 +6,6 @@ import { useAuth } from "@/contexts/AuthContext";
 
 // Mock data for counts and earnings
 const mockActiveRentalsCount = 2;
-const mockListedItemsCount = 5;
 const mockTotalEarnings = 1250;
 
 export default function DashboardPage() {
@@ -17,7 +16,6 @@ export default function DashboardPage() {
       <ActivityOverview 
         user={user}
         activeRentalsCount={mockActiveRentalsCount}
-        listedItemsCount={mockListedItemsCount}
         totalEarnings={mockTotalEarnings}
       />
       <ActivityTabs />
