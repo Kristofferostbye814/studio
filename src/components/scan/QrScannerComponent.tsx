@@ -63,7 +63,7 @@ export function QrScannerComponent() {
 
       setIsCameraStarting(true);
       try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
         }
@@ -74,7 +74,7 @@ export function QrScannerComponent() {
         toast({
           variant: 'destructive',
           title: 'Kameratilgang Avslått',
-          description: 'Vennligst aktiver kameratilgang i nettleserinnstillingene.',
+          description: 'Vennligst aktiver kameratilgang i nettleserinnstillingene. Forsikre deg om at du velger bakkameraet hvis mulig.',
         });
       } finally {
         setIsCameraStarting(false);
@@ -165,6 +165,9 @@ export function QrScannerComponent() {
                   </AlertDescription>
                 </Alert>
               )}
+               {hasCameraPermission === true && (
+                 <p className="text-sm text-muted-foreground mt-2">Pek kameraet mot en QR-kode.</p>
+               )}
             </div>
           )}
 
