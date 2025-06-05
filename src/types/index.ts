@@ -1,3 +1,4 @@
+
 export interface User {
   id: string;
   email: string;
@@ -10,31 +11,34 @@ export interface RentalItem {
   name: string;
   description: string;
   imageUrl: string;
-  ownerId: string;
+  ownerId: string; // Should ideally be a station ID or similar if items belong to the station
   hourlyRate?: number;
   dailyRate?: number;
   category?: string;
   availability: boolean;
-  location?: string; // For return process
-  qrCodeValue?: string; // For scanning
+  location?: string; 
+  qrCodeValue?: string; 
+  dataAiHint?: string; 
 }
 
 export interface ActiveRental {
   id: string;
   itemId: string;
-  renterId: string;
+  renterId: string; // User's ID
   startDate: string;
-  endDate?: string; // Null if ongoing
-  totalCost?: number;
-  itemDetails?: RentalItem; // Denormalized for easier display
+  endDate?: string; 
+  totalCost?: number; // Can be accrued cost for ongoing, or final cost for history
+  itemDetails?: RentalItem; 
 }
 
-export interface ListedItem extends RentalItem {
-  rentalHistory?: ActiveRental[]; // History of rentals for this item
-  currentRental?: ActiveRental; // If currently rented out
-}
+// This type might not be needed if users can't list items
+// export interface ListedItem extends RentalItem {
+//   rentalHistory?: ActiveRental[]; 
+//   currentRental?: ActiveRental; 
+// }
 
-export interface Earnings {
-  totalEarned: number;
-  monthlyBreakdown: { month: string; amount: number }[];
-}
+// This type is not relevant if customers are only renting
+// export interface Earnings {
+//   totalEarned: number;
+//   monthlyBreakdown: { month: string; amount: number }[];
+// }

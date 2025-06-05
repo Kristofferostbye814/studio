@@ -11,9 +11,10 @@ import { PackageOpen, History, ThumbsUp } from "lucide-react";
 import { Card, CardTitle } from "@/components/ui/card";
 
 // Mock Data
-const mockOngoingRentals: ActiveRental[] = [
-  { id: 'r1', itemId: 'item1', renterId: 'user1', startDate: '2023-10-01', itemDetails: { id: 'item1', name: 'Høytrykksspyler', description: 'Kraftig Kärcher høytrykksspyler', imageUrl: 'https://placehold.co/300x200.png', ownerId: 'station-owner', dailyRate: 200, availability: true, dataAiHint: "power washer" } },
-  { id: 'r2', itemId: 'item2', renterId: 'user1', startDate: '2023-10-05', itemDetails: { id: 'item2', name: 'Verktøysett', description: 'Komplett verktøysett for hjemmefiksere', imageUrl: 'https://placehold.co/300x200.png', ownerId: 'station-owner', dailyRate: 150, availability: true, dataAiHint: "tool kit" } },
+// Added totalCost to ongoing rentals to simulate accrued cost or rental fee
+export const mockOngoingRentals: ActiveRental[] = [
+  { id: 'r1', itemId: 'item1', renterId: 'user1', startDate: '2023-10-01', totalCost: 450, itemDetails: { id: 'item1', name: 'Høytrykksspyler', description: 'Kraftig Kärcher høytrykksspyler', imageUrl: 'https://placehold.co/300x200.png', ownerId: 'station-owner', dailyRate: 200, availability: true, dataAiHint: "power washer" } },
+  { id: 'r2', itemId: 'item2', renterId: 'user1', startDate: '2023-10-05', totalCost: 220, itemDetails: { id: 'item2', name: 'Verktøysett', description: 'Komplett verktøysett for hjemmefiksere', imageUrl: 'https://placehold.co/300x200.png', ownerId: 'station-owner', dailyRate: 150, availability: true, dataAiHint: "tool kit" } },
 ];
 
 const mockRentalHistory: ActiveRental[] = [
@@ -49,7 +50,7 @@ export function ActivityTabs() {
       <TabsContent value="ongoing">
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {mockOngoingRentals.length > 0 ? mockOngoingRentals.map(rental => (
-            <RentalCard key={rental.id} item={rental.itemDetails!} rentalStatus="ongoing" />
+            <RentalCard key={rental.id} item={rental.itemDetails!} rentalStatus="ongoing" startDate={rental.startDate} currentCost={rental.totalCost} />
           )) : <EmptyState message="Du leier ingen gjenstander for øyeblikket." />}
         </div>
       </TabsContent>

@@ -1,12 +1,14 @@
+
 'use client';
 
 import { ActivityTabs } from "@/components/dashboard/ActivityTabs";
 import { ActivityOverview } from "@/components/dashboard/ActivityOverview";
 import { useAuth } from "@/contexts/AuthContext";
+import { mockOngoingRentals } from "@/components/dashboard/ActivityTabs"; // Import mock data to get count
 
-// Mock data for counts and earnings
-const mockActiveRentalsCount = 2;
-const mockTotalEarnings = 1250;
+// Use length of mockOngoingRentals for activeRentalsCount
+const mockActiveRentalsCount = mockOngoingRentals.length;
+// const mockTotalEarnings = 1250; // Removed
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -16,7 +18,7 @@ export default function DashboardPage() {
       <ActivityOverview 
         user={user}
         activeRentalsCount={mockActiveRentalsCount}
-        totalEarnings={mockTotalEarnings}
+        // totalEarnings={mockTotalEarnings} // Removed
       />
       <ActivityTabs />
     </div>

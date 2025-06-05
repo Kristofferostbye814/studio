@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -8,7 +9,7 @@ import {
   ShoppingBag,
   Settings,
   Repeat,
-  DollarSign
+  // DollarSign // Removed
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/shared/Logo';
@@ -21,20 +22,20 @@ import {
   SidebarMenuButton,
   SidebarFooter,
   useSidebar,
-} from '@/components/ui/sidebar'; // Using shadcn/ui sidebar components
+} from '@/components/ui/sidebar';
 
 const navItems = [
   { href: '/dashboard', label: 'Min Side', icon: LayoutDashboard },
   { href: '/scan', label: 'Skann QR', icon: QrCode },
   { href: '/dashboard/my-rentals', label: 'Mine Leieforhold', icon: ShoppingBag },
   { href: '/dashboard/returns', label: 'Returer', icon: Repeat },
-  { href: '/dashboard/earnings', label: 'Inntekter', icon: DollarSign },
+  // { href: '/dashboard/earnings', label: 'Inntekter', icon: DollarSign }, // Removed
   { href: '/dashboard/settings', label: 'Innstillinger', icon: Settings },
 ];
 
 export function DashboardSidebar() {
   const pathname = usePathname();
-  const { open } = useSidebar(); // Get sidebar state
+  const { open } = useSidebar();
 
   return (
     <Sidebar collapsible="icon" variant="sidebar" side="left">

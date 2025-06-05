@@ -1,17 +1,20 @@
+
 import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { RentalItem } from "@/types";
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
-import { CalendarClock, CheckCircle, CircleOff, Edit3, Eye, Repeat } from 'lucide-react';
+import { CalendarClock, CheckCircle, CircleOff, Edit3, Eye, Repeat, CalendarDays, DollarSign } from 'lucide-react'; // Added CalendarDays, DollarSign
 
 interface RentalCardProps {
   item: RentalItem;
   rentalStatus?: 'ongoing' | 'available' | 'rented_out' | 'unavailable' | 'history';
+  startDate?: string; // For ongoing rentals
+  currentCost?: number; // For ongoing rentals
 }
 
-export function RentalCard({ item, rentalStatus }: RentalCardProps) {
+export function RentalCard({ item, rentalStatus, startDate, currentCost }: RentalCardProps) {
   const getStatusBadge = () => {
     switch (rentalStatus) {
       case 'ongoing':
@@ -34,7 +37,7 @@ export function RentalCard({ item, rentalStatus }: RentalCardProps) {
           src={item.imageUrl || "https://placehold.co/400x300.png"}
           alt={item.name}
           width={400}
-          height={225} // Aspect ratio 16:9
+          height={225}
           className="object-cover w-full h-48"
           data-ai-hint={item.dataAiHint || "rental item"}
         />
@@ -45,22 +48,40 @@ export function RentalCard({ item, rentalStatus }: RentalCardProps) {
         <CardDescription className="text-sm text-muted-foreground mb-2 h-10 overflow-hidden text-ellipsis">
           {item.description}
         </CardDescription>
-        <div className="flex justify-between items-center text-sm">
-          {item.dailyRate && <p><span className="font-semibold">{item.dailyRate},-</span> kr/dag</p>}
-          {item.hourlyRate && <p><span className="font-semibold">{item.hourlyRate},-</span> kr/time</p>}
-        </div>
+        
+        {rentalStatus === 'ongoing' && startDate && (
+          <div className="space-y-1 text-sm mb-2">
+            <div className="flex items-center text-muted-foreground">
+              <CalendarDays className="mr-2 h-4 w-4" />
+              <span>Leid siden: {new Date(startDate).toLocaleDateString()}</span>
+            </div>
+            {typeof currentCost === 'number' && (
+              <div className="flex items-center text-foreground">
+                <DollarSign className="mr-2 h-4 w-4 text-primary" />
+                <span className="font-semibold">Påløpt kostnad: {currentCost},- kr</span>
+              </div>
+            )}
+          </div>
+        )}
+
+        {rentalStatus !== 'ongoing' && (item.dailyRate || item.hourlyRate) && (
+          <div className="flex justify-between items-center text-sm mb-2">
+            {item.dailyRate && <p><span className="font-semibold">{item.dailyRate},-</span> kr/dag</p>}
+            {item.hourlyRate && <p><span className="font-semibold">{item.hourlyRate},-</span> kr/time</p>}
+          </div>
+        )}
       </CardContent>
       <CardFooter className="p-4 border-t">
         {rentalStatus === 'ongoing' && (
           <Button asChild className="w-full font-headline">
             <Link href={`/return-item/${item.id}`}>
-              <Repeat className="mr-2 h-4 w-4" /> Returner
+              <Repeat className="mr-2 h-4 w-4" /> Returner & Avslutt Leie
             </Link>
           </Button>
         )}
         {rentalStatus === 'available' && (
            <Button variant="outline" asChild className="w-full font-headline">
-             <Link href={`/list-item?edit=${item.id}`}>
+             <Link href={`/list-item?edit=${item.id}`}> {/* This link will lead to a disabled page, which is fine for now */}
                <Edit3 className="mr-2 h-4 w-4" /> Administrer
              </Link>
            </Button>
@@ -75,10 +96,10 @@ export function RentalCard({ item, rentalStatus }: RentalCardProps) {
              <CircleOff className="mr-2 h-4 w-4" /> Utilgjengelig
            </Button>
         )}
-        {!rentalStatus && ( // Generic view, e.g. search results
+        {!rentalStatus && ( 
             <Button asChild className="w-full font-headline">
-                <Link href={`/scan?item=${item.id}`}> {/* Simulate scanning this item */}
-                    <Eye className="mr-2 h-4 w-4" /> Vis
+                <Link href={`/scan?item=${item.id}`}> 
+                    <Eye className="mr-2 h-4 w-4" /> Vis & Lei
                 </Link>
             </Button>
         )}

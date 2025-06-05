@@ -1,18 +1,19 @@
+
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { DollarSign, PackageOpen, QrCode } from "lucide-react";
+import { PackageOpen, QrCode } from "lucide-react"; // Removed DollarSign
 import type { User } from "@/types";
 
 interface ActivityOverviewProps {
   user: User | null;
   activeRentalsCount: number;
-  totalEarnings: number;
+  // totalEarnings: number; // Removed
 }
 
-export function ActivityOverview({ user, activeRentalsCount, totalEarnings }: ActivityOverviewProps) {
+export function ActivityOverview({ user, activeRentalsCount }: ActivityOverviewProps) {
   return (
     <div className="mb-8">
       <h2 className="font-headline text-2xl md:text-3xl font-semibold mb-2">
@@ -20,10 +21,14 @@ export function ActivityOverview({ user, activeRentalsCount, totalEarnings }: Ac
       </h2>
       <p className="text-muted-foreground mb-6">Her er en rask oversikt over din Relivery-aktivitet.</p>
       
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-6">
-        <StatCard title="Aktive Leieforhold" value={activeRentalsCount.toString()} icon={<PackageOpen className="h-6 w-6 text-primary" />} />
-        <StatCard title="Total Inntjening" value={`${totalEarnings},- kr`} icon={<DollarSign className="h-6 w-6 text-primary" />} />
-        <Card className="flex flex-col justify-center items-center p-6 bg-primary/5 hover:bg-primary/10 transition-colors md:col-span-2 lg:col-span-1">
+      <div className="grid gap-4 md:grid-cols-2 mb-6">
+        <StatCard 
+          title="Aktive Leieforhold" 
+          value={activeRentalsCount.toString()} 
+          icon={<PackageOpen className="h-6 w-6 text-primary" />} 
+        />
+        {/* Removed Total Earnings StatCard */}
+        <Card className="flex flex-col justify-center items-center p-6 bg-primary/5 hover:bg-primary/10 transition-colors md:col-span-1">
             <CardTitle className="font-headline text-lg mb-2 text-center">Klar for å leie?</CardTitle>
             <div className="flex flex-col gap-2 w-full">
                 <Button asChild className="w-full font-headline">
