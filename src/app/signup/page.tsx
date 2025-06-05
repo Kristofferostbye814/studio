@@ -26,3 +26,6 @@ export default function SignupPage() {
         <Logo />
       </div>
       <AuthForm mode="signup" />
+    </div>
+  );
+}
