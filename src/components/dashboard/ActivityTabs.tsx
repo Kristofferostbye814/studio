@@ -9,6 +9,7 @@ import Image from "next/image";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { PackageOpen, HandCoins, History, ThumbsUp, ThumbsDown } from "lucide-react";
+import { Card, CardTitle } from "@/components/ui/card"; // Added import
 
 // Mock Data
 const mockOngoingRentals: ActiveRental[] = [
