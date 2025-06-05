@@ -1,0 +1,1 @@
+import { QrScannerComponent } from '@/components/scan/QrScannerComponent';
