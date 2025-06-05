@@ -1,12 +1,9 @@
-
 // Fil: src/lib/firebase.ts
 
 import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
 import { getFirestore, Firestore } from "firebase/firestore";
-import { getAnalytics, isSupported, Analytics } from "firebase/analytics"; // Importer for Analytics
-// Importer getStorage hvis du skal bruke Firebase Storage
-// import { getStorage } from "firebase/storage";
+// import { getAnalytics, isSupported, Analytics } from "firebase/analytics"; // Temporarily commented out
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -31,20 +28,22 @@ const auth: Auth = getAuth(app);
 const db: Firestore = getFirestore(app);
 
 // Initialiser Analytics kun hvis det støttes av nettleseren
-let analytics: Analytics | undefined;
-if (typeof window !== 'undefined') { // Sjekk om vi er i nettlesermiljø
-  isSupported().then((supported) => {
-    if (supported) {
-      analytics = getAnalytics(app);
-      console.log("Firebase Analytics initialisert");
-    } else {
-      console.log("Firebase Analytics støttes ikke i denne nettleseren.");
-    }
-  }).catch(err => {
-    console.error("Feil ved initialisering av Firebase Analytics:", err);
-  });
-}
+// let analytics: Analytics | undefined; // Temporarily commented out
+// if (typeof window !== 'undefined') { // Sjekk om vi er i nettlesermiljø
+//   isSupported().then((supported) => {
+//     if (supported) {
+//       analytics = getAnalytics(app);
+//       console.log("Firebase Analytics initialisert");
+//     } else {
+//       console.log("Firebase Analytics støttes ikke i denne nettleseren.");
+//     }
+//   }).catch(err => {
+//     console.error("Feil ved initialisering av Firebase Analytics:", err);
+//   });
+// }
 
 // const storage = getStorage(app); // Aktiver denne linjen hvis du bruker Firebase Storage
 
-export { app, auth, db, analytics };
+// Temporarily export without analytics
+export { app, auth, db };
+// export { app, auth, db, analytics }; // Original export
