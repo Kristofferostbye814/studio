@@ -8,7 +8,7 @@ export default function HomePage() {
       <PublicHeader />
       <main className="flex-grow flex items-center justify-center py-12 md:py-20">
         <section className="container mx-auto px-4 text-center max-w-3xl">
-          <Logo className="mx-auto mb-8 justify-center" iconSize={48} textSize="text-4xl" />
+          {/* Logo removed from here */}
           <h1 className="font-headline text-4xl md:text-5xl font-bold mb-6 text-primary">
             Vi leier ut – sammen
           </h1>
