@@ -30,9 +30,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     try {
       const loggedInUser = await apiLogin(email, password);
-      setUser(loggedInUser);
-      if (loggedInUser) router.push('/dashboard');
-      return loggedInUser;
+      if (loggedInUser) {
+        setUser(loggedInUser);
+        router.push('/dashboard');
+        return loggedInUser;
+      } else {
+        // User not found or credentials incorrect
+        setUser(null);
+        throw new Error("Ugyldig e-post eller passord.");
+      }
     } catch (error) {
       console.error("Login failed:", error);
       setUser(null); // Ensure user is null on failure
