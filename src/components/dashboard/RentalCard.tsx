@@ -79,3 +79,10 @@ export function RentalCard({ item, rentalStatus }: RentalCardProps) {
             <Button asChild className="w-full font-headline">
                 <Link href={`/scan?item=${item.id}`}> {/* Simulate scanning this item */}
                     <Eye className="mr-2 h-4 w-4" /> Vis
+                </Link>
+            </Button>
+        )}
+      </CardFooter>
+    </Card>
+  );
+}

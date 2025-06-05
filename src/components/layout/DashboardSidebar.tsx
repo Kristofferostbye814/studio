@@ -71,5 +71,10 @@ export function DashboardSidebar() {
       {open && (
         <SidebarFooter className="p-4 border-t border-sidebar-border">
             <p className="text-xs text-sidebar-foreground/70">
-              © {new Date().getFullYear()} Relivery
-            
+              © {new Date().getFullYear()} Relivery. Alle rettigheter reservert.
+            </p>
+        </SidebarFooter>
+      )}
+    </Sidebar>
+  );
+}
