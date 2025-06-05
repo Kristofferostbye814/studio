@@ -55,4 +55,8 @@ function StatCard({ title, value, icon }: StatCardProps) {
         {icon}
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold font
+        <div className="text-2xl font-bold">{value}</div>
+      </CardContent>
+    </Card>
+  );
+}
