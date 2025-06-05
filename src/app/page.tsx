@@ -10,21 +10,15 @@ export default function HomePage() {
         <section className="container mx-auto px-4 text-center max-w-3xl">
           <Logo className="mx-auto mb-8 justify-center" iconSize={48} textSize="text-4xl" />
           <h1 className="font-headline text-4xl md:text-5xl font-bold mb-6 text-primary">
-            Relivery: Din Partner i Sirkulær Økonomi
+            Vi leier ut – sammen
           </h1>
-          <p className="text-lg md:text-xl text-foreground/80 mb-8">
-            Relivery gjør det enkelt å delta i den sirkulære økonomien. Hos oss kan du leie verktøy og utstyr du trenger, direkte fra din lokale gjenvinningsstasjon. Bidra til et mer bærekraftig samfunn, reduser avfall og spar penger – alt på ett sted.
+          <p className="text-lg md:text-xl text-foreground/80 mb-6">
+            Vi begynner med å gjenbruke det vi har, og bygger veien videre herfra.
+            Når du leier hos oss, gir du nytt liv til produkter som fortsatt virker – og gir andre mulighet til å reparere, bruke og sirkulere videre.
           </p>
-          <div className="my-8 md:my-12">
-            <Image
-              src="https://placehold.co/600x350.png"
-              alt="Illustrasjon av sirkulær økonomi eller gjenbruk"
-              width={600}
-              height={350}
-              className="rounded-xl shadow-2xl mx-auto"
-              data-ai-hint="circular economy concept"
-            />
-          </div>
+          <p className="text-lg md:text-xl text-foreground/80 mb-10 font-semibold">
+            Enkelt for deg. Bra for alle.
+          </p>
           <p className="text-md text-foreground/70">
             Logg inn eller opprett en konto via knappene øverst for å komme i gang.
           </p>
