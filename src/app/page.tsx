@@ -2,69 +2,67 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { QrCode, UploadCloud, Repeat, Users, TrendingUp, ShieldCheck } from 'lucide-react';
+import { QrCode, UploadCloud, Repeat, Users, TrendingUp, ShieldCheck, Clock, ShoppingBag, Recycle, Gift } from 'lucide-react';
 import { PublicHeader } from '@/components/layout/PublicHeader';
+import { cn } from '@/lib/utils';
 
 export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
       <PublicHeader />
       <main className="flex-grow">
-        {/* Hero Section */}
-        <section className="py-16 md:py-24 bg-gradient-to-br from-primary/10 via-background to-background">
+        {/* Info Bar */}
+        <section className="bg-primary text-primary-foreground py-3">
+          <div className="container mx-auto px-4 text-center flex items-center justify-center">
+            <Clock className="w-5 h-5 mr-2" />
+            <span>Åpent i dag: 10:00 - 17:00</span>
+          </div>
+        </section>
+
+        {/* Hero Section (Simplified or placeholder, original content can be adapted/removed) */}
+        <section className="py-12 md:py-16 bg-gradient-to-br from-primary/10 via-background to-background">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="font-headline text-4xl md:text-6xl font-bold mb-6 text-primary">
+            <h1 className="font-headline text-4xl md:text-6xl font-bold mb-4 text-primary">
               Velkommen til Relivery
             </h1>
             <p className="text-lg md:text-xl text-foreground/80 mb-8 max-w-3xl mx-auto">
-              Bli med på den sirkulære revolusjonen, helt enkelt! Hos Relivery tror vi på en fremtid hvor det å dele, leie og reparere er like naturlig som å kjøpe nytt.
+              Bli med på den sirkulære revolusjonen, helt enkelt!
             </p>
-            <div className="space-x-4">
-              <Button size="lg" asChild className="font-headline">
-                <Link href="/signup">Opprett Konto</Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild className="font-headline">
-                <Link href="/dashboard">Utforsk Min Side</Link>
-              </Button>
-            </div>
-            <div className="mt-12">
-              <Image
-                src="https://placehold.co/800x400.png"
-                alt="Circular economy concept"
-                width={800}
-                height={400}
-                className="rounded-lg shadow-xl mx-auto"
-                data-ai-hint="circular economy community"
+          </div>
+        </section>
+
+        {/* Promo Cards Section */}
+        <section className="py-12 md:py-16">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              <PromoCard
+                icon={<ShoppingBag className="w-10 h-10" />}
+                title="Butikker"
+                variant="primary"
+                href="/shops"
+              />
+              <PromoCard
+                icon={<Users className="w-10 h-10" />}
+                title="Aktivitetskalender"
+                variant="default"
+                href="/calendar"
+              />
+              <PromoCard
+                icon={<Recycle className="w-10 h-10" />}
+                title="Levere til ombruk"
+                variant="default"
+                href="/recycle"
+              />
+              <PromoCard
+                icon={<Gift className="w-10 h-10" />}
+                title="Gavekort"
+                variant="default"
+                href="/giftcards"
               />
             </div>
           </div>
         </section>
 
-        {/* Features Section */}
-        <section className="py-16 md:py-24">
-          <div className="container mx-auto px-4">
-            <h2 className="font-headline text-3xl md:text-4xl font-semibold text-center mb-12 text-accent">
-              Enklere tilgang, smartere forbruk
-            </h2>
-            <div className="grid md:grid-cols-3 gap-8">
-              <FeatureCard
-                icon={<QrCode className="w-10 h-10 text-primary" />}
-                title="Skann & Lei"
-                description="Finn en Relivery QR-kode, skann med telefonen og lei på sekunder. Tilgang når du trenger det."
-              />
-              <FeatureCard
-                icon={<UploadCloud className="w-10 h-10 text-primary" />}
-                title="Del Dine Ressurser"
-                description="Har du ting som samler støv? Legg dem ut for utleie, hjelp andre og tjen litt ekstra."
-              />
-              <FeatureCard
-                icon={<Repeat className="w-10 h-10 text-primary" />}
-                title="Enkle Returer"
-                description="Smertefri returprosess. Følg enkle instruksjoner, bekreft med bilde, og du er ferdig!"
-              />
-            </div>
-          </div>
-        </section>
 
         {/* Vision Section */}
         <section className="py-16 md:py-24 bg-primary/5">
@@ -103,7 +101,7 @@ export default function HomePage() {
         </section>
       </main>
 
-      <footer className="py-8 bg-gray-100 dark:bg-gray-800 border-t">
+      <footer className="py-8 bg-card border-t">
         <div className="container mx-auto px-4 text-center text-foreground/70">
           <p>&copy; {new Date().getFullYear()} Relivery Simplified. Alle rettigheter reservert.</p>
           <p className="text-sm mt-2">Sammen for en sirkulær fremtid!</p>
@@ -113,6 +111,37 @@ export default function HomePage() {
   );
 }
 
+interface PromoCardProps {
+  icon: React.ReactNode;
+  title: string;
+  variant: 'primary' | 'default';
+  href: string;
+}
+
+function PromoCard({ icon, title, variant, href }: PromoCardProps) {
+  const isPrimary = variant === 'primary';
+  return (
+    <Link href={href} passHref>
+      <Card 
+        className={cn(
+          "text-center shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col items-center justify-center p-6 aspect-[4/3] sm:aspect-square md:aspect-[4/3]",
+          isPrimary ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-card text-card-foreground hover:bg-muted"
+        )}
+      >
+        {isPrimary ? (
+          <div className="mb-3">{icon}</div>
+        ) : (
+          <div className="mb-3 bg-primary text-primary-foreground p-3 rounded-full w-fit">
+            {icon}
+          </div>
+        )}
+        <p className={cn("font-semibold", isPrimary ? "text-primary-foreground" : "text-foreground")}>{title}</p>
+      </Card>
+    </Link>
+  );
+}
+
+// Original FeatureCard, kept for reference or other uses, but not used in current promo layout
 interface FeatureCardProps {
   icon: React.ReactNode;
   title: string;
