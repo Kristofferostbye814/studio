@@ -1,11 +1,14 @@
+
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { QrCode, Camera, Zap, CalendarDays, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { QrCode, Camera, Zap, CalendarDays, CheckCircle, XCircle, Loader2, VideoOff } from 'lucide-react';
 import Image from 'next/image';
 import type { RentalItem } from '@/types';
 import { useToast } from '@/hooks/use-toast';
@@ -39,15 +42,73 @@ export function QrScannerComponent() {
   const [showCameraFeed, setShowCameraFeed] = useState(false);
   const { toast } = useToast();
 
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
+  const [isCameraStarting, setIsCameraStarting] = useState(false);
+
+  useEffect(() => {
+    let stream: MediaStream | null = null;
+
+    const startUserMedia = async () => {
+      if (!navigator.mediaDevices?.getUserMedia) {
+        toast({
+          variant: 'destructive',
+          title: 'Kamera ikke støttet',
+          description: 'Nettleseren din støtter ikke kameratilgang.',
+        });
+        setHasCameraPermission(false);
+        setIsCameraStarting(false);
+        return;
+      }
+
+      setIsCameraStarting(true);
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+        setHasCameraPermission(true);
+      } catch (error) {
+        console.error('Error accessing camera:', error);
+        setHasCameraPermission(false);
+        toast({
+          variant: 'destructive',
+          title: 'Kameratilgang Avslått',
+          description: 'Vennligst aktiver kameratilgang i nettleserinnstillingene.',
+        });
+      } finally {
+        setIsCameraStarting(false);
+      }
+    };
+
+    if (showCameraFeed) {
+      startUserMedia();
+    } else {
+      if (videoRef.current?.srcObject) {
+        const currentStream = videoRef.current.srcObject as MediaStream;
+        currentStream.getTracks().forEach(track => track.stop());
+        videoRef.current.srcObject = null;
+      }
+      setHasCameraPermission(null); // Reset permission status when camera is hidden
+    }
+
+    return () => { // Cleanup on unmount
+      if (videoRef.current?.srcObject) {
+        const currentStream = videoRef.current.srcObject as MediaStream;
+        currentStream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [showCameraFeed, toast]);
+
   const handleSimulatedScan = async (value?: string) => {
-    const codeToScan = value || qrValueInput || 'RELIVERY-123'; // Default to a known mock QR
+    const codeToScan = value || qrValueInput || 'RELIVERY-123';
     if (!codeToScan) {
         toast({ title: "Ingen QR-kode", description: "Vennligst skriv inn en QR-kode verdi.", variant: "destructive"});
         return;
     }
     setIsLoading(true);
     setScannedItem(null);
-    setShowCameraFeed(false);
+    // setShowCameraFeed(false); // Don't hide camera on simulated scan
     try {
       const item = await fetchItemByQrCode(codeToScan);
       if (item) {
@@ -61,12 +122,6 @@ export function QrScannerComponent() {
     }
     setIsLoading(false);
   };
-  
-  // Placeholder for actual camera access
-  const startCamera = () => {
-    setShowCameraFeed(true);
-    toast({title: "Kamera aktivert (simulert)", description: "I en ekte app ville kameraet ditt åpnes her."})
-  }
 
   return (
     <div className="space-y-8">
@@ -76,25 +131,43 @@ export function QrScannerComponent() {
             <QrCode className="mr-3 h-8 w-8 text-primary" /> Skann & Lei
           </CardTitle>
           <CardDescription>
-            Skann en Relivery QR-kode for å se detaljer og leie en gjenstand. For demonstrasjon, bruk knappen eller skriv inn "RELIVERY-123".
+            Skann en Relivery QR-kode for å se detaljer og leie en gjenstand. For demonstrasjon, bruk simuleringsknappen eller skriv inn "RELIVERY-123".
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button onClick={startCamera} size="lg" className="flex-1 font-headline" variant="outline">
-              <Camera className="mr-2 h-5 w-5" /> Åpne Kamera (Simulert)
+            <Button
+              onClick={() => setShowCameraFeed(prev => !prev)}
+              size="lg"
+              className="flex-1 font-headline"
+              variant="outline"
+              disabled={isCameraStarting}
+            >
+              {isCameraStarting && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
+              {!isCameraStarting && <Camera className="mr-2 h-5 w-5" />}
+              {showCameraFeed ? 'Skjul Kamera' : 'Åpne Kamera'}
             </Button>
-            <Button onClick={() => handleSimulatedScan()} size="lg" className="flex-1 font-headline">
-              <Zap className="mr-2 h-5 w-5" /> Simuler Skann (RELIVERY-123)
+            <Button onClick={() => handleSimulatedScan()} size="lg" className="flex-1 font-headline" disabled={isLoading}>
+              {isLoading && !qrValueInput ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Zap className="mr-2 h-5 w-5" />}
+              Simuler Skann (RELIVERY-123)
             </Button>
           </div>
+
           {showCameraFeed && (
-            <div className="bg-muted border rounded-lg p-4 text-center">
-                <Image src="https://placehold.co/400x300.png" alt="Simulert kamerafeed" width={400} height={300} className="mx-auto rounded" data-ai-hint="camera viewfinder" />
-                <p className="text-sm text-muted-foreground mt-2">Simulert kamerafeed. Rett kameraet mot en QR-kode.</p>
-                 <Button onClick={() => {setShowCameraFeed(false); handleSimulatedScan("RELIVERY-123");}} className="mt-2">Ta bilde (Simuler)</Button>
+            <div className="bg-card border rounded-lg p-4 text-center mt-6">
+              <video ref={videoRef} className="w-full aspect-video rounded-md bg-muted" autoPlay muted playsInline />
+              {hasCameraPermission === false && (
+                <Alert variant="destructive" className="mt-4 text-left">
+                  <VideoOff className="h-5 w-5" />
+                  <AlertTitle>Kameratilgang Nødvendig</AlertTitle>
+                  <AlertDescription>
+                    Fikk ikke tilgang til kamera. Vennligst sjekk tillatelser i nettleseren din og prøv igjen.
+                  </AlertDescription>
+                </Alert>
+              )}
             </div>
           )}
+
           <div className="flex items-end gap-2">
             <div className="flex-grow">
                 <Label htmlFor="qrInput">Eller skriv inn QR-kode manuelt:</Label>
@@ -108,7 +181,7 @@ export function QrScannerComponent() {
         </CardContent>
       </Card>
 
-      {isLoading && (
+      {isLoading && !scannedItem && ( // Show loading only if no item is displayed yet
         <div className="flex justify-center items-center py-10">
           <Loader2 className="h-12 w-12 animate-spin text-primary" />
           <p className="ml-4 text-lg">Leter etter gjenstand...</p>
@@ -126,8 +199,8 @@ export function QrScannerComponent() {
               className="rounded-t-lg object-cover w-full max-h-[400px]"
               data-ai-hint={scannedItem.dataAiHint || "rental item"}
             />
-             {scannedItem.availability ? 
-                <Badge className="absolute top-4 right-4 bg-green-500 text-white"><CheckCircle className="mr-1 h-4 w-4" />Tilgjengelig</Badge> : 
+             {scannedItem.availability ?
+                <Badge className="absolute top-4 right-4 bg-green-500 text-white"><CheckCircle className="mr-1 h-4 w-4" />Tilgjengelig</Badge> :
                 <Badge variant="destructive" className="absolute top-4 right-4"><XCircle className="mr-1 h-4 w-4" />Utilgjengelig</Badge>
             }
           </CardHeader>
@@ -150,3 +223,4 @@ export function QrScannerComponent() {
     </div>
   );
 }
+
