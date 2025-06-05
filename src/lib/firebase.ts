@@ -1,32 +1,50 @@
-'use client'; // Beholder denne hvis noen deler av auth krever klientkontekst tidlig
 
-import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
-import { getAuth, Auth } from 'firebase/auth';
-// Importer andre Firebase-tjenester du trenger, f.eks. Firestore:
-// import { getFirestore, Firestore } from 'firebase/firestore';
+// Fil: src/lib/firebase.ts
 
-// TODO: Erstatt dette med dine egne Firebase prosjektinnstillinger
+import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
+import { getAuth, Auth } from "firebase/auth";
+import { getFirestore, Firestore } from "firebase/firestore";
+import { getAnalytics, isSupported, Analytics } from "firebase/analytics"; // Importer for Analytics
+// Importer getStorage hvis du skal bruke Firebase Storage
+// import { getStorage } from "firebase/storage";
+
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID",
-  measurementId: "YOUR_MEASUREMENT_ID" // Valgfritt, for Analytics
+  apiKey: "AIzaSyDioR4sem2UtVTFBMbjDjFKfWnJ6kbUjL4",
+  authDomain: "rellivery-fe6f8.firebaseapp.com",
+  projectId: "rellivery-fe6f8",
+  storageBucket: "rellivery-fe6f8.firebasestorage.app",
+  messagingSenderId: "936317972049",
+  appId: "1:936317972049:web:806ce356cefe8cde83d270",
+  measurementId: "G-9MKCP83DJJ"
 };
 
+// Initialiser Firebase App
 let app: FirebaseApp;
-let auth: Auth;
-// let db: Firestore; // Hvis du bruker Firestore
-
 if (!getApps().length) {
   app = initializeApp(firebaseConfig);
 } else {
-  app = getApps()[0];
+  app = getApp(); // Få den eksisterende appen hvis den allerede er initialisert
 }
 
-auth = getAuth(app);
-// db = getFirestore(app); // Hvis du bruker Firestore
+const auth: Auth = getAuth(app);
+const db: Firestore = getFirestore(app);
 
-export { app, auth /*, db */ };
+// Initialiser Analytics kun hvis det støttes av nettleseren
+let analytics: Analytics | undefined;
+if (typeof window !== 'undefined') { // Sjekk om vi er i nettlesermiljø
+  isSupported().then((supported) => {
+    if (supported) {
+      analytics = getAnalytics(app);
+      console.log("Firebase Analytics initialisert");
+    } else {
+      console.log("Firebase Analytics støttes ikke i denne nettleseren.");
+    }
+  }).catch(err => {
+    console.error("Feil ved initialisering av Firebase Analytics:", err);
+  });
+}
+
+// const storage = getStorage(app); // Aktiver denne linjen hvis du bruker Firebase Storage
+
+export { app, auth, db, analytics };
