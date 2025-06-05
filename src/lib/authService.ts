@@ -1,49 +1,83 @@
+import { 
+  Auth,
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  signOut, 
+  updateProfile,
+  onAuthStateChanged as firebaseOnAuthStateChanged,
+  User as FirebaseUser
+} from 'firebase/auth';
+import { auth } from './firebase'; // Importerer den initialiserte auth-instansen
 import type { User } from '@/types';
 
-// Mock database of users
-const users: User[] = [
-  { id: '1', email: 'user@example.com', name: 'Test Bruker', avatarUrl: 'https://placehold.co/100x100.png' },
-];
-
-const MOCK_USER_KEY = 're livery_mock_user';
+function mapFirebaseUserToAppUser(firebaseUser: FirebaseUser): User {
+  return {
+    id: firebaseUser.uid,
+    email: firebaseUser.email || '', // Firebase email kan være null, appens type krever string
+    name: firebaseUser.displayName || undefined,
+    avatarUrl: firebaseUser.photoURL || undefined,
+  };
+}
 
 export async function login(email: string, password?: string): Promise<User | null> {
-  // In a real app, you'd validate credentials against a backend.
-  // Here, we'll just find a user by email.
-  const user = users.find(u => u.email === email);
-  if (user) {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(MOCK_USER_KEY, JSON.stringify(user));
-    }
-    return user;
+  if (!password) {
+    throw new Error("Passord er påkrevd for innlogging.");
   }
-  return null;
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    return mapFirebaseUserToAppUser(userCredential.user);
+  } catch (error: any) {
+    // Firebase kaster feil med `code` (f.eks. 'auth/user-not-found', 'auth/wrong-password')
+    // Disse kan håndteres mer spesifikt i UI om ønskelig
+    console.error("Firebase login error:", error.code, error.message);
+    throw error; // Kaster videre slik at AuthContext/AuthForm kan håndtere det
+  }
 }
 
 export async function signup(name: string, email: string, password?: string): Promise<User | null> {
-  const existingUser = users.find(u => u.email === email);
-  if (existingUser) {
-    throw new Error('User already exists with this email.');
+  if (!password) {
+    throw new Error("Passord er påkrevd for registrering.");
   }
-  const newUser: User = {
-    id: String(users.length + 1),
-    email,
-    name,
-    avatarUrl: `https://placehold.co/100x100.png?text=${name.substring(0,1)}`
-  };
-  users.push(newUser); // In a real app, save to DB
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(MOCK_USER_KEY, JSON.stringify(newUser));
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    // Oppdater brukerens profil med navn
+    await updateProfile(userCredential.user, { displayName: name });
+    
+    // Firebase brukerobjektet oppdateres ikke umiddelbart med displayName etter updateProfile.
+    // Vi returnerer et User-objekt med det navnet vi nettopp satte.
+    return {
+      id: userCredential.user.uid,
+      email: userCredential.user.email || '',
+      name: name, // Bruk navnet som ble sendt inn
+      avatarUrl: userCredential.user.photoURL || undefined, // photoURL settes typisk senere
+    };
+  } catch (error: any) {
+    console.error("Firebase signup error:", error.code, error.message);
+    throw error; // Kaster videre
   }
-  return newUser;
 }
 
 export async function logout(): Promise<void> {
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem(MOCK_USER_KEY);
+  try {
+    await signOut(auth);
+  } catch (error) {
+    console.error("Firebase logout error:", error);
+    throw error;
   }
 }
 
-export function getAuthenticatedUser(): User | null {
-  if (typeof window !== 'undefined') {
-    const userData = localStorage.getItem(MOCK_USER_KEY);
+// Wrapper for onAuthStateChanged for å mappe FirebaseUser til User
+export function onAuthStateChanged(callback: (user: User | null) => void): () => void {
+  return firebaseOnAuthStateChanged(auth, (firebaseUser) => {
+    if (firebaseUser) {
+      callback(mapFirebaseUserToAppUser(firebaseUser));
+    } else {
+      callback(null);
+    }
+  });
+}
+
+// Funksjon for å hente den nåværende autentiserte brukeren synkront (kan være null ved oppstart)
+export function getCurrentFirebaseUser(): FirebaseUser | null {
+  return auth.currentUser;
+}
