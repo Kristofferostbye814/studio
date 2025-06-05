@@ -40,9 +40,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error("Ugyldig e-post eller passord.");
       }
     } catch (error) {
-      console.error("Login failed:", error);
+      // The error is intentionally thrown to be caught by the calling UI (AuthForm)
+      // which will display a toast message.
       setUser(null); // Ensure user is null on failure
-      throw error; // Re-throw to be caught by UI
+      throw error; // Re-throw to be caught by UI (AuthForm)
     } finally {
       setIsLoading(false);
     }
