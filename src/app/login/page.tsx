@@ -25,4 +25,7 @@ export default function LoginPage() {
        <div className="absolute top-8 left-8">
         <Logo />
       </div>
-      <AuthForm mode
+      <AuthForm mode="login" />
+    </div>
+  );
+}

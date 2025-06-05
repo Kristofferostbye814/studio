@@ -109,4 +109,8 @@ export function AuthForm({ mode }: AuthFormProps) {
               {isLogin ? 'Opprett en her' : 'Logg inn her'}
             </Link>
           </Button>
-        
+        </p>
+      </CardFooter>
+    </Card>
+  );
+}
