@@ -4,97 +4,107 @@
 
 @layer base {
   :root {
-    --background: 180 5% 95%; /* #F0F2F2 - Very light greyish cyan */
-    --foreground: 180 10% 20%; /* #2D3333 - Dark grey/black */
+    /* Nytt Fargetema basert på brukerinput */
+    /* Grønn/Turkis (#007d8a) -> HSL: 186 100% 27% */
+    /* Mørk grå/Svart (#343333) -> HSL: 0 1% 20% */
+    /* Hvit (#ffffff) -> HSL: 0 0% 100% */
 
-    --card: 180 20% 90%; /* #DDEAEA - Light cyan/grey */
-    --card-foreground: 180 10% 20%;
+    --background: 0 0% 100%; /* Hvit */
+    --foreground: 0 1% 20%; /* Mørk grå/Svart */
 
-    --popover: 180 20% 90%;
-    --popover-foreground: 180 10% 20%;
+    --card: 0 0% 98%; /* Veldig lys grå, nesten hvit for kortbakgrunn */
+    --card-foreground: 0 1% 20%; /* Mørk grå/Svart for tekst på kort */
 
-    --primary: 181 29% 41%; /* #4A8A8B - Teal */
-    --primary-foreground: 0 0% 100%; /* #FFFFFF - White */
+    --popover: 0 0% 98%;
+    --popover-foreground: 0 1% 20%;
 
-    --secondary: 180 20% 85%; /* #D0E0E0 - Slightly darker light cyan/grey */
-    --secondary-foreground: 181 29% 41%; /* Teal text on secondary */
+    --primary: 186 100% 27%; /* Grønn/Turkis */
+    --primary-foreground: 0 0% 100%; /* Hvit for tekst på primærfarge */
 
-    --muted: 180 15% 88%; /* #D8E6E6 - Muted cyan/grey */
-    --muted-foreground: 180 10% 40%; /* #5C6666 - Medium grey for muted text */
+    /* Avledet sekundærfarge - en lysere/mykere variant av primærfargen */
+    --secondary: 186 70% 50%; /* Lysere turkis, f.eks. #4DAEB7 */
+    --secondary-foreground: 0 1% 20%; /* Mørk grå/Svart for tekst på sekundærfarge */
 
-    --accent: 181 29% 41%; /* #4A8A8B - Teal */
-    --accent-foreground: 0 0% 100%; /* #FFFFFF - White */
+    --muted: 0 0% 95%; /* Lys grå for dempede elementer */
+    --muted-foreground: 0 1% 40%; /* Medium grå for dempet tekst */
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --accent: 186 100% 27%; /* Grønn/Turkis (samme som primær) */
+    --accent-foreground: 0 0% 100%; /* Hvit */
 
-    --border: 180 25% 75%; /* #AFC4C4 - Tealish border */
-    --input: 180 25% 92%; /* #E3EDED - Lighter tealish input background */
-    --ring: 181 29% 41%; /* #4A8A8B - Teal for focus rings */
+    --destructive: 0 84.2% 60.2%; /* Beholdes som standard rød */
+    --destructive-foreground: 0 0% 98%; /* Beholdes */
 
-    --radius: 1rem; /* Increased for more rounded corners */
+    --border: 0 0% 90%; /* Lys grå bord */
+    --input: 0 0% 97%; /* Veldig lys grå for inputbakgrunn */
+    --ring: 186 100% 27%; /* Grønn/Turkis for fokus-ring */
 
-    /* Sidebar specific colors */
-    --sidebar-background: 181 35% 30%; /* #336F70 - Darker teal */
-    --sidebar-foreground: 180 20% 90%; /* #DDEAEA - Light cyan text */
-    --sidebar-primary: 181 29% 41%; /* #4A8A8B - Main teal for active */
-    --sidebar-primary-foreground: 0 0% 100%; /* White text */
-    --sidebar-accent: 181 32% 50%; /* #5CA0A1 - Lighter teal for hover */
-    --sidebar-accent-foreground: 0 0% 100%; /* White text */
-    --sidebar-border: 181 30% 35%; /* #427E7F - Teal border in sidebar */
-    --sidebar-ring: 181 29% 41%; /* Teal ring for focus */
+    --radius: 1rem; /* Beholdes fra tidligere */
 
-    --chart-1: 181 30% 50%;
-    --chart-2: 181 40% 60%;
-    --chart-3: 181 25% 40%;
-    --chart-4: 190 30% 55%;
-    --chart-5: 170 30% 55%;
+    /* Sidebar specific colors (Light theme) */
+    --sidebar-background: 186 100% 27%; /* Grønn/Turkis (#007d8a) */
+    --sidebar-foreground: 0 0% 100%;    /* Hvit */
+    --sidebar-primary: 186 80% 35%;     /* Lysere/aktiv turkis f.eks. #1FA9B8 */
+    --sidebar-primary-foreground: 0 0% 100%; /* Hvit */
+    --sidebar-accent: 186 90% 31%;      /* Hover turkis f.eks. #0A96A5 */
+    --sidebar-accent-foreground: 0 0% 100%; /* Hvit */
+    --sidebar-border: 186 100% 22%;     /* Mørkere turkis bord f.eks. #00646E */
+    --sidebar-ring: 0 0% 100%;          /* Hvit ring på mørk bakgrunn */
+
+    /* Chart Colors (Light Theme) */
+    --chart-1: 186 100% 27%; /* Primary */
+    --chart-2: 186 80% 35%;  /* Lighter primary */
+    --chart-3: 186 100% 20%; /* Darker primary */
+    --chart-4: 190 70% 30%;  /* Shifted hue */
+    --chart-5: 180 70% 30%;  /* Shifted hue */
   }
 
   .dark {
-    --background: 180 15% 10%; /* #141A1A - Dark tealish grey */
-    --foreground: 180 15% 85%; /* #D0E0E0 - Light greyish cyan */
+    /* Dark Theme */
+    --background: 0 1% 20%; /* Mørk grå/Svart (#343333) */
+    --foreground: 0 0% 95%; /* Nesten hvit, for lesbarhet */
 
-    --card: 180 15% 15%; /* #1E2626 */
-    --card-foreground: 180 15% 85%;
+    --card: 0 1% 25%; /* Litt lysere enn bakgrunnen, f.eks. #403F3F */
+    --card-foreground: 0 0% 95%; /* Nesten hvit */
 
-    --popover: 180 15% 15%;
-    --popover-foreground: 180 15% 85%;
+    --popover: 0 1% 25%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 181 35% 55%; /* #5FA7A8 - Lighter/more saturated teal */
-    --primary-foreground: 180 100% 5%; /* #000D0D - Very dark for contrast */
+    /* Lysere/mer levende primærfarge for mørk modus */
+    --primary: 186 75% 48%; /* f.eks. #32B6C4 */
+    --primary-foreground: 0 1% 10%; /* Veldig mørk tekst for kontrast */
 
-    --secondary: 180 15% 25%; /* #343F3F */
-    --secondary-foreground: 181 35% 55%; /* Primary teal text */
+    --secondary: 186 60% 55%; /* Lysere variant av mørk primær, f.eks. #61C3CC */
+    --secondary-foreground: 0 1% 15%; /* Mørk tekst */
 
-    --muted: 180 15% 20%; /* #293333 */
-    --muted-foreground: 180 10% 60%; /* #8FA3A3 */
+    --muted: 0 1% 30%; /* Mellomgrå, f.eks. #4D4C4C */
+    --muted-foreground: 0 0% 70%; /* Lysere grå for dempet tekst */
 
-    --accent: 181 35% 55%; /* #5FA7A8 - Lighter teal becomes accent */
-    --accent-foreground: 180 100% 5%; /* Dark text */
+    --accent: 186 75% 48%; /* Samme som mørk primær */
+    --accent-foreground: 0 1% 10%; /* Veldig mørk tekst */
 
-    --destructive: 0 70% 50%;
-    --destructive-foreground: 0 0% 95%;
+    --destructive: 0 70% 50%; /* Beholdes, justert for mørk modus */
+    --destructive-foreground: 0 0% 95%; /* Beholdes */
 
-    --border: 180 10% 30%; /* #424D4D */
-    --input: 180 10% 22%; /* #313B3B */
-    --ring: 181 35% 55%; /* Lighter teal ring */
+    --border: 0 1% 35%; /* Mørk grå bord, f.eks. #595858 */
+    --input: 0 1% 28%; /* Mørk grå input, f.eks. #474646 */
+    --ring: 186 75% 48%; /* Mørk primær for fokus-ring */
 
     /* Dark Sidebar */
-    --sidebar-background: 180 25% 8%; /* #0F1919 - Very dark teal */
-    --sidebar-foreground: 180 20% 80%; /* #C0D3D3 - Lighter cyan text */
-    --sidebar-primary: 181 35% 55%; /* Brighter teal from dark mode primary */
-    --sidebar-primary-foreground: 180 100% 5%; /* Dark text */
-    --sidebar-accent: 181 30% 65%; /* #7EC4C5 - Even lighter teal for hover */
-    --sidebar-accent-foreground: 180 100% 5%; /* Dark text */
-    --sidebar-border: 180 20% 12%; /* #182323 */
-    --sidebar-ring: 181 35% 55%;
+    --sidebar-background: 0 1% 12%;     /* Veldig mørk grå, f.eks. #1F1F1F */
+    --sidebar-foreground: 0 0% 85%;     /* Lys grå tekst, f.eks. #D9D9D9 */
+    --sidebar-primary: 186 75% 48%;     /* Mørk modus primær */
+    --sidebar-primary-foreground: 0 1% 10%; /* Veldig mørk tekst */
+    --sidebar-accent: 186 70% 52%;      /* Lysere variant av mørk modus primær for hover */
+    --sidebar-accent-foreground: 0 1% 10%; /* Veldig mørk tekst */
+    --sidebar-border: 0 1% 18%;         /* Litt lysere enn sidebar bakgrunn, f.eks. #2E2E2E */
+    --sidebar-ring: 186 75% 48%;        /* Mørk modus primær */
 
-    --chart-1: 181 40% 60%;
-    --chart-2: 181 50% 70%;
-    --chart-3: 181 30% 50%;
-    --chart-4: 190 40% 65%;
-    --chart-5: 170 40% 65%;
+    /* Chart Colors (Dark Theme) */
+    --chart-1: 186 75% 48%; /* DM Primary */
+    --chart-2: 186 60% 55%; /* Lighter DM Primary */
+    --chart-3: 186 80% 40%; /* Darker/More Sat DM Primary */
+    --chart-4: 190 60% 52%; /* Shifted hue */
+    --chart-5: 180 60% 52%; /* Shifted hue */
   }
 }
 
