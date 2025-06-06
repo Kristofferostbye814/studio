@@ -4,19 +4,19 @@ import {
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
   signOut, 
-  updateProfile,
+  updateProfile as firebaseUpdateProfile, // Renamed to avoid conflict
   onAuthStateChanged as firebaseOnAuthStateChanged,
   User as FirebaseUser,
   updatePassword as firebaseUpdatePassword,
-  sendPasswordResetEmail as firebaseSendPasswordResetEmail // Importer sendPasswordResetEmail
+  sendPasswordResetEmail as firebaseSendPasswordResetEmail
 } from 'firebase/auth';
-import { auth } from './firebase'; // Importerer den initialiserte auth-instansen
+import { auth } from './firebase'; 
 import type { User } from '@/types';
 
 function mapFirebaseUserToAppUser(firebaseUser: FirebaseUser): User {
   return {
     id: firebaseUser.uid,
-    email: firebaseUser.email || '', // Firebase email kan være null, appens type krever string
+    email: firebaseUser.email || '', 
     name: firebaseUser.displayName || undefined,
     avatarUrl: firebaseUser.photoURL || undefined,
   };
@@ -30,10 +30,8 @@ export async function login(email: string, password?: string): Promise<User | nu
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     return mapFirebaseUserToAppUser(userCredential.user);
   } catch (error: any) {
-    // Firebase kaster feil med `code` (f.eks. 'auth/user-not-found', 'auth/wrong-password')
-    // Disse kan håndteres mer spesifikt i UI om ønskelig
     console.error("Firebase login error:", error.code, error.message);
-    throw error; // Kaster videre slik at AuthContext/AuthForm kan håndtere det
+    throw error; 
   }
 }
 
@@ -43,20 +41,17 @@ export async function signup(name: string, email: string, password?: string): Pr
   }
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    // Oppdater brukerens profil med navn
-    await updateProfile(userCredential.user, { displayName: name });
+    await firebaseUpdateProfile(userCredential.user, { displayName: name });
     
-    // Firebase brukerobjektet oppdateres ikke umiddelbart med displayName etter updateProfile.
-    // Vi returnerer et User-objekt med det navnet vi nettopp satte.
     return {
       id: userCredential.user.uid,
       email: userCredential.user.email || '',
-      name: name, // Bruk navnet som ble sendt inn
-      avatarUrl: userCredential.user.photoURL || undefined, // photoURL settes typisk senere
+      name: name, 
+      avatarUrl: userCredential.user.photoURL || undefined, 
     };
   } catch (error: any) {
     console.error("Firebase signup error:", error.code, error.message);
-    throw error; // Kaster videre
+    throw error; 
   }
 }
 
@@ -69,7 +64,6 @@ export async function logout(): Promise<void> {
   }
 }
 
-// Wrapper for onAuthStateChanged for å mappe FirebaseUser til User
 export function onAuthStateChanged(callback: (user: User | null) => void): () => void {
   return firebaseOnAuthStateChanged(auth, (firebaseUser) => {
     if (firebaseUser) {
@@ -80,12 +74,10 @@ export function onAuthStateChanged(callback: (user: User | null) => void): () =>
   });
 }
 
-// Funksjon for å hente den nåværende autentiserte brukeren synkront (kan være null ved oppstart)
 export function getCurrentFirebaseUser(): FirebaseUser | null {
   return auth.currentUser;
 }
 
-// Funksjon for å oppdatere brukerens passord
 export async function updateUserPassword(newPassword: string): Promise<void> {
   const user = auth.currentUser;
   if (user) {
@@ -93,8 +85,6 @@ export async function updateUserPassword(newPassword: string): Promise<void> {
       await firebaseUpdatePassword(user, newPassword);
     } catch (error: any) {
       console.error("Firebase updatePassword error:", error.code, error.message);
-      // Firebase kan kaste 'auth/requires-recent-login'
-      // Dette bør håndteres i UI ved å be brukeren logge inn på nytt.
       throw error;
     }
   } else {
@@ -102,13 +92,33 @@ export async function updateUserPassword(newPassword: string): Promise<void> {
   }
 }
 
-// Funksjon for å sende e-post for tilbakestilling av passord
 export async function sendPasswordResetEmail(email: string): Promise<void> {
   try {
     await firebaseSendPasswordResetEmail(auth, email);
   } catch (error: any) {
     console.error("Firebase sendPasswordResetEmail error:", error.code, error.message);
-    // Firebase kan kaste 'auth/user-not-found', 'auth/invalid-email' etc.
     throw error;
+  }
+}
+
+// Ny funksjon for å oppdatere brukerprofil (navn, og senere avatarUrl)
+export async function updateUserProfileData(data: { name?: string; avatarUrl?: string }): Promise<void> {
+  const user = auth.currentUser;
+  if (user) {
+    try {
+      const profileUpdate: { displayName?: string; photoURL?: string } = {};
+      if (data.name !== undefined) profileUpdate.displayName = data.name; // Tillat tom streng for å fjerne navn om ønskelig
+      if (data.avatarUrl) profileUpdate.photoURL = data.avatarUrl;
+
+      if (Object.keys(profileUpdate).length > 0) {
+        await firebaseUpdateProfile(user, profileUpdate);
+        // AuthContext sin onAuthStateChanged bør fange opp endringene
+      }
+    } catch (error: any) {
+      console.error("Firebase updateUserProfileData error:", error.code, error.message);
+      throw error;
+    }
+  } else {
+    throw new Error("Bruker ikke logget inn for profil-oppdatering.");
   }
 }
