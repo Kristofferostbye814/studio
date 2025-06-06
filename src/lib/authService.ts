@@ -5,7 +5,8 @@ import {
   signOut, 
   updateProfile,
   onAuthStateChanged as firebaseOnAuthStateChanged,
-  User as FirebaseUser
+  User as FirebaseUser,
+  updatePassword as firebaseUpdatePassword // Importer updatePassword
 } from 'firebase/auth';
 import { auth } from './firebase'; // Importerer den initialiserte auth-instansen
 import type { User } from '@/types';
@@ -80,4 +81,21 @@ export function onAuthStateChanged(callback: (user: User | null) => void): () =>
 // Funksjon for å hente den nåværende autentiserte brukeren synkront (kan være null ved oppstart)
 export function getCurrentFirebaseUser(): FirebaseUser | null {
   return auth.currentUser;
+}
+
+// Funksjon for å oppdatere brukerens passord
+export async function updateUserPassword(newPassword: string): Promise<void> {
+  const user = auth.currentUser;
+  if (user) {
+    try {
+      await firebaseUpdatePassword(user, newPassword);
+    } catch (error: any) {
+      console.error("Firebase updatePassword error:", error.code, error.message);
+      // Firebase kan kaste 'auth/requires-recent-login'
+      // Dette bør håndteres i UI ved å be brukeren logge inn på nytt.
+      throw error;
+    }
+  } else {
+    throw new Error("Bruker ikke logget inn.");
+  }
 }
