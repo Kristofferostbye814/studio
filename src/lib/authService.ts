@@ -1,3 +1,4 @@
+
 import { 
   Auth,
   createUserWithEmailAndPassword, 
@@ -6,7 +7,8 @@ import {
   updateProfile,
   onAuthStateChanged as firebaseOnAuthStateChanged,
   User as FirebaseUser,
-  updatePassword as firebaseUpdatePassword // Importer updatePassword
+  updatePassword as firebaseUpdatePassword,
+  sendPasswordResetEmail as firebaseSendPasswordResetEmail // Importer sendPasswordResetEmail
 } from 'firebase/auth';
 import { auth } from './firebase'; // Importerer den initialiserte auth-instansen
 import type { User } from '@/types';
@@ -97,5 +99,16 @@ export async function updateUserPassword(newPassword: string): Promise<void> {
     }
   } else {
     throw new Error("Bruker ikke logget inn.");
+  }
+}
+
+// Funksjon for å sende e-post for tilbakestilling av passord
+export async function sendPasswordResetEmail(email: string): Promise<void> {
+  try {
+    await firebaseSendPasswordResetEmail(auth, email);
+  } catch (error: any) {
+    console.error("Firebase sendPasswordResetEmail error:", error.code, error.message);
+    // Firebase kan kaste 'auth/user-not-found', 'auth/invalid-email' etc.
+    throw error;
   }
 }

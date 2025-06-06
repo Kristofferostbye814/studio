@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -12,6 +13,7 @@ import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
+import { sendPasswordResetEmail } from '@/lib/authService'; // Importer den nye funksjonen
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Ugyldig e-postadresse' }),
@@ -36,13 +38,14 @@ export function AuthForm({ mode }: AuthFormProps) {
   const schema = isLogin ? loginSchema : signupSchema;
   type FormInputs = typeof schema extends typeof loginSchema ? LoginFormInputs : SignupFormInputs;
 
-  const { register, handleSubmit, formState: { errors } } = useForm<FormInputs>({
+  const { register, handleSubmit, formState: { errors }, getValues, trigger } = useForm<FormInputs>({
     resolver: zodResolver(schema),
   });
 
   const { login, signup } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
 
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     setIsLoading(true);
@@ -65,6 +68,39 @@ export function AuthForm({ mode }: AuthFormProps) {
       setIsLoading(false);
     }
   };
+
+  const handlePasswordReset = async () => {
+    // Valider e-postfeltet først
+    const emailIsValid = await trigger("email");
+    if (!emailIsValid) {
+      toast({
+        title: "E-post mangler",
+        description: "Vennligst skriv inn din e-postadresse for å tilbakestille passordet.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const email = getValues("email");
+    setIsResettingPassword(true);
+    try {
+      await sendPasswordResetEmail(email);
+      toast({
+        title: "E-post for tilbakestilling sendt",
+        description: `Hvis en konto med e-posten ${email} eksisterer, har vi sendt instruksjoner for tilbakestilling av passord. Sjekk din innboks (og spamfilter).`,
+      });
+    } catch (error: any) {
+      // Vi viser en generisk melding selv om e-posten ikke finnes, for å unngå at brukere kan sjekke hvilke e-poster som er registrert.
+      console.error("Password reset error:", error);
+       toast({
+        title: "E-post for tilbakestilling sendt",
+        description: `Hvis en konto med e-posten ${email} eksisterer, har vi sendt instruksjoner for tilbakestilling av passord. Sjekk din innboks (og spamfilter).`,
+      });
+    } finally {
+      setIsResettingPassword(false);
+    }
+  };
+
 
   return (
     <Card className="w-full max-w-md shadow-xl">
@@ -91,7 +127,21 @@ export function AuthForm({ mode }: AuthFormProps) {
             {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Passord</Label>
+            <div className="flex justify-between items-center">
+              <Label htmlFor="password">Passord</Label>
+              {isLogin && (
+                <Button
+                  type="button"
+                  variant="link"
+                  onClick={handlePasswordReset}
+                  disabled={isResettingPassword}
+                  className="p-0 h-auto text-sm"
+                >
+                  {isResettingPassword && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}
+                  Glemt passord?
+                </Button>
+              )}
+            </div>
             <Input id="password" type="password" {...register('password')} placeholder="••••••••" />
             {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
           </div>
